@@ -30,8 +30,8 @@ public class PartServiceImpl implements PartService {
     public void add(@NonNull Part part) throws IllegalModificationException {
         int idIfExists = dao.getIdByName(part.getName());
         if (idIfExists != -1) {
-            throw new IllegalModificationException("Trying to add an existing part. The one with name " + part.getName()
-                    + " is already defined with id " + idIfExists);
+            throw new IllegalModificationException("Trying to add an existing part. The one with name '" + part.getName()
+                    + "' already exist.");
         } else {
             dao.add(part);
         }
@@ -47,8 +47,8 @@ public class PartServiceImpl implements PartService {
     public void update(int id, @NonNull Part part) throws IllegalModificationException {
         int idIfExists = dao.getIdByName(part.getName());
         if (idIfExists != -1 && idIfExists != part.getId()) {
-            throw new IllegalModificationException("Trying to set an existing part name. Part with name " + part.getName()
-                    + " is already exist with id " + idIfExists);
+            throw new IllegalModificationException("Trying to set an existing part name. Part with name '" + part.getName()
+                    + "' is already exist.");
         } else {
             checkType(part);
             dao.update(part);
