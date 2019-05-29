@@ -86,9 +86,8 @@
                 <p style="width:250px;" class="w3-left"><strong>There are no parts to show. You can add some by the "add" button below.</strong></p>
             </c:when>
             <c:otherwise>
-                <div class="w3-container w3-left" style="position:absolute;top:140px; left:50px;">
+                <div id="filterSelector" class="w3-container w3-left" style="position:absolute;top:140px; left:50px;">
                     <select name="filterAttr" id="filterSelect" onchange="applyFilter()">
-                        <option selected="selected" disabled="disabled">Выберите фильтр:</option>
                         <option value="all">Все детали</option>
                         <option value="true">Только необходимые</option>
                         <option value="false">Только второстепенные</option>

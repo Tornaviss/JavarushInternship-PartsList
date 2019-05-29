@@ -43,6 +43,7 @@ public class MainController {
             modelAndView.addObject("isNoElementsToShow", true);
         } else {
             if (searchingId != -1) modelAndView.addObject("searchingId", searchingId);
+            modelAndView.addObject("filterAttr", partService.getFilterAttr());
             modelAndView.addObject("page", page);
             modelAndView.addObject("resultsCount", resultsCount);
             modelAndView.addObject("partsCount", partsCount);

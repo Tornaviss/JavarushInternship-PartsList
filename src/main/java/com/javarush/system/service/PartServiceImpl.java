@@ -136,8 +136,8 @@ public class PartServiceImpl implements PartService {
                 return (list.indexOf(p) / itemsOnPage) + 1;
             }
         }
-        System.out.println("WTF!!!???");
-        return 1;
+        System.out.println("ЄЄЄЙ!");
+        return -1;
     }
 
     @Override
