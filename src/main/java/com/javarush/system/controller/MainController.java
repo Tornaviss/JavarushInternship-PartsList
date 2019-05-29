@@ -18,15 +18,18 @@ public class MainController {
     private int resultsCount;
     private int page;
 
+
     @Autowired
     public void setPartService(PartService partService) {
         this.partService = partService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView allParts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int resultsCount, @RequestParam(defaultValue = "none") String filter) {
+    public ModelAndView allParts(@RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "10") int resultsCount) {
         this.page = page;
         this.resultsCount = resultsCount;
+        if (partService.getFilterAttr() == null) partService.setFilterAttr("all");
 
         int partsCount = partService.partsCount();
         int pagesCount = (partsCount + 9)/resultsCount;
@@ -51,9 +54,7 @@ public class MainController {
 
     @RequestMapping(value = "/deleteOne/{id}", method = RequestMethod.GET)
     public String removeOne(@PathVariable int id) {
-        System.out.println("id --- " + id + " count ---- " + partService.getById(id).getCount());
         if (partService.getById(id).getCount() == 0) this.page = partService.checkPage(page, resultsCount);
-        System.out.println("response --- " + this.page);
         partService.removeOne(id);
         page = partService.checkPage(page, resultsCount);
         return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
@@ -107,7 +108,6 @@ public class MainController {
     @RequestMapping(value = "/search/{partName}", method = RequestMethod.GET)
     public String search(@PathVariable String partName, RedirectAttributes redirectAttributes) {
         partName = partName.trim();
-        System.out.println(partName);
         int res = partService.searchPartPage(partName, page, resultsCount);
         if (res == -1) {
             redirectAttributes.addFlashAttribute("flashMessage", "Part '" + partName + "' not found.");
@@ -118,5 +118,10 @@ public class MainController {
             return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
         }
         return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
+    }
+    @RequestMapping(value = "/applyFilter/{filter}", method = RequestMethod.GET)
+    public String applyFilter(@PathVariable String filter) {
+        partService.setFilterAttr(filter);
+        return "redirect:/";
     }
 }

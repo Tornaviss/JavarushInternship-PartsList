@@ -19,14 +19,12 @@
     <c:url value="/add" var="addUrl" />
     <c:url value="/applyOrdering/" var="applyOrdering" />
 
-
     <script type="text/javascript">
         function get(id) {
             return document.getElementById(id);
         }
         function openUpdateModal(id, essential)
         {
-
             get('id01').style.display='block';
             get('modalHeader').innerText = 'Редактировать';
             get('name').value = get('partName' + id).innerText;
@@ -51,11 +49,15 @@
             if (input.value != null && input.value != "") {
                 document.location.replace('/search/' + document.getElementById('searchInput').value);
             }
-
         }
         function switchSelect() {
             var typeSelect = get("typeSelector");
             typeSelect.disabled = !(typeSelect.disabled);
+        }
+
+        function applyFilter() {
+            var e = get('filterSelect');
+            document.location.replace('/applyFilter/'+e.options[e.selectedIndex].value);
         }
     </script>
 </head>
@@ -74,10 +76,19 @@
 
         <c:choose>
             <c:when test="${isNoElementsToShow}">
-                <p style="width:250px;margin-right:100px;"><strong>There are no parts to show. You can add some by the "add" button below.</strong></p>
+                <p style="width:250px;" class="w3-left"><strong>There are no parts to show. You can add some by the "add" button below.</strong></p>
             </c:when>
             <c:otherwise>
-                <div class="w3-container w3-right" style="width: 300px; height:100px;">
+                <div class="w3-container w3-left" style="position:absolute;top:140px; left:50px;">
+                    <select name="filterAttr" id="filterSelect" onchange="applyFilter()">
+                        <option selected="selected" disabled="disabled">Выберите фильтр:</option>
+                        <option value="all">Все детали</option>
+                        <option value="true">Только необходимые</option>
+                        <option value="false">Только второстепенные</option>
+                    </select>
+
+                </div>
+                <div class="w3-container w3-right" style="width: 300px; height:80px;margin-top:15px;">
 
                         <input class="w3-input" type="text" id="searchInput"/>
 
@@ -130,8 +141,8 @@
                 </div>
             </c:otherwise>
         </c:choose>
-        <div class="w3-display-container" style="min-width:80%;height:50px;position:relative;">
-            <div class=" w3-display-middle">
+        <div class="w3-display-container" style="min-width:600px;height:50px;position:relative;">
+            <div class="w3-display-middle">
                 <!-- Buttons Container -->
 
                 <button onclick="openAddModal()"

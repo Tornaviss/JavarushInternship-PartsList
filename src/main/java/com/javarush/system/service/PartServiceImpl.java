@@ -125,7 +125,6 @@ public class PartServiceImpl implements PartService {
         if (partsCount < itemsOnPage || dao.getIdByName(partName) == -1) return -1;
         List<Part> list = dao.getAllParts(1, partsCount);
         for (Part p : list) {
-            System.out.println("comparing " + partName + " with " + p.getName());
             if (p.getName().equalsIgnoreCase(partName)) {
                 int page =  (list.indexOf(p) / itemsOnPage) + 1;
                 return currentPage == page ? 0 : page;
@@ -141,9 +140,15 @@ public class PartServiceImpl implements PartService {
         }
         return page;
     }
+
     @Override
-    public List<Part> getAllPartsWithFilter(int page, int resultsCount) {
-        return dao.getAllPartsWithFilter(page, resultsCount);
+    public void setFilterAttr(String filterAttr) {
+        dao.setFilterAttr(filterAttr);
+    }
+
+    @Override
+    public String getFilterAttr() {
+        return dao.getFilterAttr();
     }
 }
 

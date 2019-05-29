@@ -16,13 +16,13 @@ public class PartDao {
 
     private SessionFactory sessionFactory;
     private String ordering = "id";
-    private Boolean filterAttr;
+    private String filterAttr;
 
-    public Boolean getFilterAttr() {
+    public String getFilterAttr() {
         return filterAttr;
     }
 
-    public void setFilterAttr(Boolean filterAttr) {
+    public void setFilterAttr(String filterAttr) {
         this.filterAttr = filterAttr;
     }
 
@@ -42,14 +42,10 @@ public class PartDao {
     @SuppressWarnings("unchecked")
     public List<Part> getAllParts(int page, int resultsCount) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from Part p ORDER BY p." + ordering).setFirstResult(10 * (page - 1)).setMaxResults(resultsCount).list();
-    }
-
-    public List<Part> getAllPartsWithFilter(int page, int resultsCount) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Part> query = session.createQuery("from Part p WHERE p.essential = :essentialValue ORDER BY p." + ordering);
-        query.setParameter("essentialValue", filterAttr);
-        return query.setFirstResult(10 * (page - 1)).setMaxResults(resultsCount).list();
+        if (filterAttr.equals("all")) {
+            return session.createQuery("from Part p ORDER BY p." + ordering).setFirstResult(10 * (page - 1)).setMaxResults(resultsCount).list();
+        }
+        return session.createQuery("from Part p WHERE p.essential = " + filterAttr + " ORDER BY p." + ordering).setFirstResult(10 * (page - 1)).setMaxResults(resultsCount).list();
     }
 
     @SuppressWarnings("unchecked")

@@ -33,5 +33,7 @@ public interface PartService {
     @Transactional
     int checkPage(int page, int resultsCount);
     @Transactional
-    List<Part> getAllPartsWithFilter(int page, int resultsCount);
+    void setFilterAttr(String filterAttr);
+    @Transactional
+    String getFilterAttr();
 }
