@@ -96,7 +96,7 @@
                 </div>
                 <div class="w3-container w3-right" style="width: 300px; height:80px;margin-top:15px;">
 
-                        <input class="w3-input" type="text" id="searchInput" value=""/>
+                        <input class="w3-input" type="text" id="searchInput" />
 
                     <button class="w3-btn w3-hover-blue-grey w3-pale-blue" onclick="search()">Поиск</button>
                 </div>
