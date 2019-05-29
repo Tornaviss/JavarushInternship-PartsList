@@ -1,5 +1,6 @@
 package com.javarush.system.controller;
 
+import static com.javarush.system.dao.OrderingConstants.*;
 import com.javarush.system.exceptions.IllegalModificationException;
 import com.javarush.system.model.Part;
 import com.javarush.system.service.PartService;
@@ -16,15 +17,6 @@ public class MainController {
     private PartService partService;
     private int resultsCount;
     private int page;
-    private static final String DEFAULT_ORDERING = "id";
-    private static final String ESSENTIAL_LAST_ORDERING = "essential ASC";
-    private static final String ESSENTIAL_FIRST_ORDERING = "essential DESC";
-    private static final String NAME_ASC_ORDERING = "name ASC";
-    private static final String NAME_DESC_ORDERING = "name DESC";
-    private static final String COUNT_ASC_ORDERING = "count ASC";
-    private static final String COUNT_DESC_ORDERING = "count DESC";
-
-
 
     @Autowired
     public void setPartService(PartService partService) {
@@ -32,9 +24,10 @@ public class MainController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView allParts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int resultsCount) {
+    public ModelAndView allParts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int resultsCount, @RequestParam(defaultValue = "none") String filter) {
         this.page = page;
         this.resultsCount = resultsCount;
+
         int partsCount = partService.partsCount();
         int pagesCount = (partsCount + 9)/resultsCount;
         if (pagesCount == 0) pagesCount = 1;
@@ -57,8 +50,12 @@ public class MainController {
     }
 
     @RequestMapping(value = "/deleteOne/{id}", method = RequestMethod.GET)
-    public String removeOnePart(@PathVariable int id) {
+    public String removeOne(@PathVariable int id) {
+        System.out.println("id --- " + id + " count ---- " + partService.getById(id).getCount());
+        if (partService.getById(id).getCount() == 0) this.page = partService.checkPage(page, resultsCount);
+        System.out.println("response --- " + this.page);
         partService.removeOne(id);
+        page = partService.checkPage(page, resultsCount);
         return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
     }
 
@@ -66,6 +63,7 @@ public class MainController {
     public String remove(@PathVariable int id) {
         Part part = partService.getById(id);
         partService.remove(part);
+        page = partService.checkPage(page, resultsCount);
         return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
     }
 
@@ -104,6 +102,21 @@ public class MainController {
         if (param.equals(NAME_DESC_ORDERING.replaceFirst(" ", ""))) partService.setOrdering((NAME_DESC_ORDERING));
         if (param.equals(COUNT_ASC_ORDERING.replaceFirst(" ", ""))) partService.setOrdering(COUNT_ASC_ORDERING);
         if (param.equals(COUNT_DESC_ORDERING.replaceFirst(" ", ""))) partService.setOrdering((COUNT_DESC_ORDERING));
+        return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
+    }
+    @RequestMapping(value = "/search/{partName}", method = RequestMethod.GET)
+    public String search(@PathVariable String partName, RedirectAttributes redirectAttributes) {
+        partName = partName.trim();
+        System.out.println(partName);
+        int res = partService.searchPartPage(partName, page, resultsCount);
+        if (res == -1) {
+            redirectAttributes.addFlashAttribute("flashMessage", "Part '" + partName + "' not found.");
+        } else if (res == 0) {
+            return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount + "&searchName=" + partName;
+        } else {
+            page = res;
+            return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
+        }
         return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
     }
 }

@@ -28,11 +28,12 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public void add(@NonNull Part part) throws IllegalModificationException {
-        int idIfExists = dao.getIdByName(part.getName());
+        int idIfExists = dao.getIdByName(part.getName().trim());
         if (idIfExists != -1) {
             throw new IllegalModificationException("Trying to add an existing part. The one with name '" + part.getName()
-                    + "' already exist.");
+                    + "' is already exist.");
         } else {
+            part.setName(part.getName().trim());
             dao.add(part);
         }
     }
@@ -97,13 +98,12 @@ public class PartServiceImpl implements PartService {
         return result;
     }
 
-
     private static void checkType(Part part) {
         if (part.getType() != null) {
             part.setEssential(true);
         }
     }
-
+    @Override
     public int partsCount() {
         return dao.partsCount();
     }
@@ -113,14 +113,37 @@ public class PartServiceImpl implements PartService {
         dao.setOrdering(ordering);
     }
 
+    /**
+     * @param partName name of the searching part
+     * @param currentPage current client's page
+     * @param itemsOnPage how many items located on one page
+     * @return page num on which the part located, -1 if the part doesn't exist and 0 if it is located in the current page
+     */
     @Override
-    public String getOrdering() {
-        return dao.getOrdering();
+    public int searchPartPage(String partName, int currentPage, int itemsOnPage) {
+        int partsCount = dao.partsCount();
+        if (partsCount < itemsOnPage || dao.getIdByName(partName) == -1) return -1;
+        List<Part> list = dao.getAllParts(1, partsCount);
+        for (Part p : list) {
+            System.out.println("comparing " + partName + " with " + p.getName());
+            if (p.getName().equalsIgnoreCase(partName)) {
+                int page =  (list.indexOf(p) / itemsOnPage) + 1;
+                return currentPage == page ? 0 : page;
+            }
+        }
+        return -1;
     }
 
     @Override
-    public int getIdByName(String name) {
-        return dao.getIdByName(name);
+    public int checkPage(int page, int resultsCount) {
+        if (page > 1) {
+            return (dao.partsCount() - ((page-1)*resultsCount)) == 0  ? page - 1 : page;
+        }
+        return page;
+    }
+    @Override
+    public List<Part> getAllPartsWithFilter(int page, int resultsCount) {
+        return dao.getAllPartsWithFilter(page, resultsCount);
     }
 }
 

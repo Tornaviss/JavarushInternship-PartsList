@@ -28,7 +28,10 @@ public interface PartService {
     @Transactional
     int partsCount();
     void setOrdering(String ordering);
-    String getOrdering();
     @Transactional
-    int getIdByName(String name);
+    int searchPartPage(String partName, int currentPage, int itemsOnPage);
+    @Transactional
+    int checkPage(int page, int resultsCount);
+    @Transactional
+    List<Part> getAllPartsWithFilter(int page, int resultsCount);
 }
