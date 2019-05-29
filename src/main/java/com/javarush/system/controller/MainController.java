@@ -98,11 +98,10 @@ public class MainController {
     @RequestMapping(value = "/applyOrdering/{param}", method = RequestMethod.GET)
     public String applyOrdering(@PathVariable String param) {
         partService.setOrdering(param);
-        return "redirect:/?page=" + this.page + "&resultsCount=" + this.resultsCount;
+        return "redirect:/?page=" + 1 + "&resultsCount=" + this.resultsCount;
     }
     @RequestMapping(value = "/search/{partName}", method = RequestMethod.GET)
     public String search(@PathVariable String partName, RedirectAttributes redirectAttributes) {
-        partName = partName.trim();
         int res = partService.searchPartPage(partName, page, resultsCount);
         if (res == -1) {
             redirectAttributes.addFlashAttribute("flashMessage", "Part '" + partName + "' not found.");

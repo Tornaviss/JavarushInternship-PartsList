@@ -127,23 +127,17 @@ public class PartServiceImpl implements PartService {
      */
     @Override
     public int searchPartPage(String partName, int currentPage, int itemsOnPage) {
+        partName = partName.trim();
         int partsCount = dao.partsCount();
-        System.out.println("total count - " + partsCount());
         if (dao.getIdByName(partName) == -1) return -1;
         List<Part> list = dao.getAllParts(1, partsCount);
         for (Part p : list) {
-
-            System.out.println(p.getName() + "  trying to check");
-            if (p.getName().equals(partName)) {
-                System.out.println("comparing with " + p.getName());
-                int page =  (list.indexOf(p) / itemsOnPage) + 1;
-                System.out.println("page = " + page + ". Current = " + currentPage);
-                return page;
+            if (p.getName().equalsIgnoreCase(partName)) {
+                return (list.indexOf(p) / itemsOnPage) + 1;
             }
         }
-        System.out.println("WHAAAAAAT?");
-        System.out.println(list);
-        return 0;
+        System.out.println("WTF!!!???");
+        return 1;
     }
 
     @Override

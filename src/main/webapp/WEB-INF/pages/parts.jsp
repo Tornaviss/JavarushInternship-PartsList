@@ -62,10 +62,9 @@
 
         function selectRow(input) {
             if (input !== -1) {
-                window.location.hash(input);
                 document.getElementById(input).style.backgroundColor = "#FDFF47";
+                document.getElementById(input).scrollIntoView(true);
             }
-
         }
     </script>
 </head>

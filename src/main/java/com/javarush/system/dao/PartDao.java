@@ -4,7 +4,6 @@ import com.javarush.system.model.Part;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -86,7 +85,7 @@ public class PartDao {
         try {
             result = query.getSingleResult();
         } catch (NoResultException e) {
-            System.out.println("EXCEPTION!");
+            System.out.println("EXCEPTION! Involved - " + name);
             return -1;
         }
         return result;
