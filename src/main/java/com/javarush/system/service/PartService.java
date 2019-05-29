@@ -32,8 +32,8 @@ public interface PartService {
     int searchPartPage(String partName, int currentPage, int itemsOnPage);
     @Transactional
     int checkPage(int page, int resultsCount);
-    @Transactional
     void setFilterAttr(String filterAttr);
-    @Transactional
     String getFilterAttr();
+    @Transactional
+    int getIdByName(String name);
 }

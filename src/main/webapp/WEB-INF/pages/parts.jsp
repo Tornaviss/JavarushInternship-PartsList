@@ -44,9 +44,9 @@
             get('typeSelector').value = '';
             get('addForm').action = "/add";
         }
-        function searchInBase() {
+        function search() {
             var input = document.getElementById('searchInput');
-            if (input.value != null && input.value != "") {
+            if (input.value != null && input.value !== "") {
                 document.location.replace('/search/' + document.getElementById('searchInput').value);
             }
         }
@@ -57,7 +57,15 @@
 
         function applyFilter() {
             var e = get('filterSelect');
-            document.location.replace('/applyFilter/'+e.options[e.selectedIndex].value);
+            document.location.replace('/applyFilter/' + e.options[e.selectedIndex].value);
+        }
+
+        function selectRow(input) {
+            if (input !== -1) {
+                window.location.hash(input);
+                document.getElementById(input).style.backgroundColor = "#FDFF47";
+            }
+
         }
     </script>
 </head>
@@ -90,9 +98,9 @@
                 </div>
                 <div class="w3-container w3-right" style="width: 300px; height:80px;margin-top:15px;">
 
-                        <input class="w3-input" type="text" id="searchInput"/>
+                        <input class="w3-input" type="text" id="searchInput" value=""/>
 
-                    <button class="w3-btn w3-hover-blue-grey w3-pale-blue" onclick="searchInBase()">Поиск</button>
+                    <button class="w3-btn w3-hover-blue-grey w3-pale-blue" onclick="search()">Поиск</button>
                 </div>
                 <div class="w3-center w3-padding w3-container" style="margin:20px 0 20px">
                     <table class="w3-container w3-table-all w3-centered" style="min-width:900px;" >
@@ -112,8 +120,8 @@
                             <th style="width:20%;">Правка</th>
                         </tr>
                         <c:forEach var="partItem" items="${partsList}">
-                            <tr id="${partItem.name.toUpperCase()}">
-                                <td id="partName${partItem.id}">${partItem.name}</td>
+                            <tr id="${partItem.id}">
+                                <td id="partName${partItem.id}" class="partName">${partItem.name}</td>
                                 <td><span id="partEssential${partItem.id}">${partItem.essential}</span></td>
                                 <td><span id="partCount${partItem.id}"
                                           style="padding-right:10px;">${partItem.count}</span>
@@ -146,12 +154,12 @@
                 <!-- Buttons Container -->
 
                 <button onclick="openAddModal()"
-                        class="w3-btn w3-light-gray w3-animate-opacity w3-hover-light-blue w3-round-large">
+                        class="w3-btn w3-blue w3-animate-opacity w3-hover-light-blue w3-round-large">
                     Добавить
                 </button>
                 <button onclick="location.href='/'"
-                        class="w3-btn w3-light-gray w3-animate-opacity w3-hover-light-blue w3-round-large">
-                    Обновить страницу
+                        class="w3-btn w3-blue w3-animate-opacity w3-hover-light-blue w3-round-large">
+                    Обновить
                 </button>
             </div>
 
@@ -239,6 +247,10 @@
         </div>
     </div>
 </div>
+
+
+<script>selectRow(${searchingId}) </script>
+
 
 </body>
 </html>

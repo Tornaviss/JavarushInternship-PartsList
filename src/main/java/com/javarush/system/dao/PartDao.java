@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -78,13 +79,14 @@ public class PartDao {
     @SuppressWarnings("unchecked")
     public int getIdByName(String name) {
         Session session = sessionFactory.getCurrentSession();
-        String sql = "select p.id from Part p where p.name = :name";
-        Query<Integer> query = session.createQuery(sql);
+        String sql = "select p.id from Part p where LOWER(p.name) = LOWER(:name)";
+        TypedQuery<Integer> query = session.createQuery(sql, Integer.class);
         query.setParameter("name", name);
         Integer result;
         try {
             result = query.getSingleResult();
         } catch (NoResultException e) {
+            System.out.println("EXCEPTION!");
             return -1;
         }
         return result;

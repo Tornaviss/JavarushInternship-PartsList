@@ -1,6 +1,6 @@
 package com.javarush.system.service;
 
-
+import static com.javarush.system.dao.OrderingConstants.*;
 import com.javarush.system.dao.PartDao;
 import com.javarush.system.exceptions.IllegalModificationException;
 import com.javarush.system.model.Part;
@@ -109,8 +109,14 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public void setOrdering(String ordering) {
-        dao.setOrdering(ordering);
+    public void setOrdering(String param) {
+        if (param.equals(DEFAULT_ORDERING)) dao.setOrdering(DEFAULT_ORDERING);
+        if (param.equals(ESSENTIAL_FIRST_ORDERING.replaceFirst(" ", ""))) dao.setOrdering(ESSENTIAL_FIRST_ORDERING);
+        if (param.equals(ESSENTIAL_LAST_ORDERING.replaceFirst(" ", ""))) dao.setOrdering((ESSENTIAL_LAST_ORDERING));
+        if (param.equals(NAME_ASC_ORDERING.replaceFirst(" ", ""))) dao.setOrdering(NAME_ASC_ORDERING);
+        if (param.equals(NAME_DESC_ORDERING.replaceFirst(" ", ""))) dao.setOrdering((NAME_DESC_ORDERING));
+        if (param.equals(COUNT_ASC_ORDERING.replaceFirst(" ", ""))) dao.setOrdering(COUNT_ASC_ORDERING);
+        if (param.equals(COUNT_DESC_ORDERING.replaceFirst(" ", ""))) dao.setOrdering((COUNT_DESC_ORDERING));
     }
 
     /**
@@ -122,15 +128,22 @@ public class PartServiceImpl implements PartService {
     @Override
     public int searchPartPage(String partName, int currentPage, int itemsOnPage) {
         int partsCount = dao.partsCount();
-        if (partsCount < itemsOnPage || dao.getIdByName(partName) == -1) return -1;
+        System.out.println("total count - " + partsCount());
+        if (dao.getIdByName(partName) == -1) return -1;
         List<Part> list = dao.getAllParts(1, partsCount);
         for (Part p : list) {
-            if (p.getName().equalsIgnoreCase(partName)) {
+
+            System.out.println(p.getName() + "  trying to check");
+            if (p.getName().equals(partName)) {
+                System.out.println("comparing with " + p.getName());
                 int page =  (list.indexOf(p) / itemsOnPage) + 1;
-                return currentPage == page ? 0 : page;
+                System.out.println("page = " + page + ". Current = " + currentPage);
+                return page;
             }
         }
-        return -1;
+        System.out.println("WHAAAAAAT?");
+        System.out.println(list);
+        return 0;
     }
 
     @Override
@@ -149,6 +162,10 @@ public class PartServiceImpl implements PartService {
     @Override
     public String getFilterAttr() {
         return dao.getFilterAttr();
+    }
+    @Override
+    public int getIdByName(String name) {
+        return dao.getIdByName(name);
     }
 }
 
